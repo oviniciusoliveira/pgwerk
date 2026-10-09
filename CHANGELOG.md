@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - `Werk.wait_for()` now respects `config.listen`. With `listen=False` it no longer opens a `LISTEN` connection and relies on polling alone, so it behaves correctly behind PgBouncer in transaction-pooling mode.
+- `enqueue()` / `enqueue_many()` now reject unknown `failure_mode` values instead of silently treating them as `hold`, and the `_failure_mode` docstring lists the real values (`hold`, `delete`).
 
 ---
 
