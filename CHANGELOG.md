@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - `werk api` no longer overwrites environment-only settings (e.g. `PGWERK_ALLOW_TRUNCATE`, `PGWERK_EPHEMERAL_TABLES`, `PGWERK_LISTEN`) with their defaults before starting the server.
+- `Werk.wait_for()` now respects `config.listen`. With `listen=False` it no longer opens a `LISTEN` connection and relies on polling alone, so it behaves correctly behind PgBouncer in transaction-pooling mode.
 
 ---
 
@@ -36,7 +37,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Added
 
 - `Werk.update_job()` lets callers change `scheduled_at`, `priority`, and `meta` on any job that has not yet started, addressed by either its UUID or its deduplication key. When rescheduling moves a job into the past the status is automatically flipped to `queued` and waiting workers are notified via `NOTIFY`.
-- New `enable_listen` config flag (default `True`) — set to `False` to disable `LISTEN/NOTIFY` wake-ups, required when running behind PgBouncer in transaction-pooling mode.
+- New `listen` config flag (default `True`, env `PGWERK_LISTEN`) — set to `False` to disable `LISTEN/NOTIFY` wake-ups, required when running behind PgBouncer in transaction-pooling mode.
 
 ---
 
