@@ -516,7 +516,9 @@ class Werk:
         """Block until a job reaches a terminal state.
 
         Uses ``LISTEN/NOTIFY`` for instant wake-up and falls back to polling
-        when the notification channel drops.
+        when the notification channel drops. When ``config.listen`` is
+        ``False`` (e.g. behind PgBouncer in transaction-pooling mode), no
+        ``LISTEN`` connection is opened and only polling is used.
 
         Args:
             job_id: ID of the job to wait for.
@@ -552,7 +554,7 @@ class Werk:
                     await asyncio.sleep(backoff)
                     backoff = min(backoff * 2, 10.0)
 
-        listener = asyncio.create_task(_listener())
+        listener = asyncio.create_task(_listener()) if self.config.listen else None
         start = asyncio.get_running_loop().time()
         try:
             while True:
@@ -573,8 +575,9 @@ class Werk:
                 if job.status in terminal:
                     return job
         finally:
-            listener.cancel()
-            await asyncio.gather(listener, return_exceptions=True)
+            if listener is not None:
+                listener.cancel()
+                await asyncio.gather(listener, return_exceptions=True)
 
     async def requeue_job(self, job_id: str) -> bool:
         """Reset a completed or failed job back to the queued state.
