@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- `werk api` no longer overwrites environment-only settings (e.g. `PGWERK_ALLOW_TRUNCATE`, `PGWERK_EPHEMERAL_TABLES`, `PGWERK_LISTEN`) with their defaults before starting the server.
+
+---
+
 ## [0.1.25] - 2026-07-22
 
 ### Added
